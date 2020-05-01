@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-const GetTasks = require("../Dao/GetTasks");
+const Tasks = require("../Dao/Tasks");
 /* GET home page. */
-router.get('/', function (req, res, next) {
-    res.send(JSON.stringify(GetTasks()));
+router.get('/', async function (req, res, next) {
+    res.send(JSON.stringify(await Tasks.Get()));
 });
 
 module.exports = router;

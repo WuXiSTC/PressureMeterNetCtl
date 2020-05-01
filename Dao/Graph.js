@@ -1,27 +1,26 @@
+require("./Config");
 const ParseSource = require("./ParseSource");
 let sources = require("./Sources")();//图数据源列表
 let graph = {};
 
-const SourceURL = "/GraphQuery";
-
 let Graph = {GraphDuration: 1e3};
 Graph.LastUpdate = new Date();
-/**
- * 使用一个数据源进行初始化
- * @param source (optional)数据源地址
- * @returns {Promise<Graph>} 返回连接图
- */
-Graph.Init = async (source) => {
-    if (typeof source === "string") {
-        sources.Add("", source);
-    } else throw "请输入一个IP地址";
+
+let Inited = false;
+
+async function Init() {
+    if (typeof global.config.InitAddress === "string") {
+        sources.Add("", global.config.InitAddress);
+    } else throw "请在global.config.InitAddress中输入一个IP地址";
     graph = await getGraph();
-};
+}
+
 /**
  * 获取连接图。有暂存和数据过期则重新获取功能
  * @returns {Promise<Graph>} 返回连接图
  */
 Graph.Get = async () => {
+    if (!Inited) Init();
     if (new Date().getTime() - Graph.LastUpdate.getTime() >= Graph.GraphDuration) {//如果数据过期
         graph = await getGraph();//则重新获取
         Graph.LastUpdate = new Date()//更新获取时间
@@ -57,7 +56,7 @@ const request = require('request');
  */
 function requestGraphJSON(source) {
     return new Promise((resolve, reject) => {
-        request(source + SourceURL, {json: true}, (err, res, body) => {
+        request(source + global.config.URL["GraphQuery"], {json: true}, (err, res, body) => {
             if (err) return reject(err);
             resolve(body)
         });
