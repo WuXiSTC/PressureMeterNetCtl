@@ -19,7 +19,7 @@ router.post('/new/*', async function (req, res, next) {
     });
     if (ok) return;//如果任务已存在就直接退出
     //任务不存在才进行进一步操作
-    let source = ParseSource(source.AccessAddress) + global.config.URL.Task;
+    let source = ParseSource(source.AccessAddress) + global.Config.URL.Task;
     proxy.web(req, res, {target: source});
 });
 
@@ -30,7 +30,7 @@ async function transmit(req, res, next) {
         return res.status(404).send("<h1>404 Not Found</h1>");
     }
 
-    source = ParseSource(source.AccessAddress) + global.config.URL.Task;
+    source = ParseSource(source.AccessAddress) + global.Config.URL.Task;
     proxy.web(req, res, {target: source});
     next()
 }
