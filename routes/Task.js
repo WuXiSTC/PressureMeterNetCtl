@@ -11,17 +11,6 @@ proxy.on('error', function (err, req, res) {
 });
 
 let ParseSource = require("../Dao/ParseSource");
-/* GET home page. */
-router.post('/new/*', async function (req, res, next) {
-    let ok = false;
-    await transmit(req, res, () => {//先用转发进行处理
-        ok = true//ok = true表明任务已存在
-    });
-    if (ok) return;//如果任务已存在就直接退出
-    //任务不存在才进行进一步操作
-    let source = ParseSource(source.AccessAddress) + global.Config.URL.Task;
-    proxy.web(req, res, {target: source});
-});
 
 async function transmit(req, res, next) {
     let ID = req.params[0];
@@ -35,12 +24,29 @@ async function transmit(req, res, next) {
     next()
 }
 
-router.get('/delete/*', transmit);
-router.get('/start/*', transmit);
-router.get('/stop/*', transmit);
-router.get('/getConfig/*', transmit);
-router.get('/getResult/*', transmit);
-router.get('/getLog/*', transmit);
-router.get('/getState/*', transmit);
+/* GET home page. */
+router.post('/new/*', async function (req, res, next) {
+    let ok = false;
+    await transmit(req, res, () => {//先用转发进行处理
+        ok = true//ok = true表明任务已存在
+    });
+    if (ok) return;//如果任务已存在就直接退出
+    //任务不存在才进行进一步操作
+    let source = ParseSource(source.AccessAddress) + global.Config.URL.Task;
+    proxy.web(req, res, {target: source});
+});
+
+function Transmit(req, res) {
+    transmit(req, res, () => {
+    })
+}
+
+router.get('/delete/*', Transmit);
+router.get('/start/*', Transmit);
+router.get('/stop/*', Transmit);
+router.get('/getConfig/*', Transmit);
+router.get('/getResult/*', Transmit);
+router.get('/getLog/*', Transmit);
+router.get('/getState/*', Transmit);
 
 module.exports = router;
