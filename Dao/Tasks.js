@@ -1,22 +1,4 @@
-let Graph = require("./Graph");
-let tasks = {TaskStates: {}, Locations: {}};
-let LastUpdate = new Date();
-let Inited = false;
-
-async function Get() {
-    if ((!Inited) || LastUpdate.getTime() !== Graph.LastUpdate.getTime()) { //未初始化或时间不符时需要更新
-        let graph = await Graph.Get();
-        LastUpdate = Graph.LastUpdate;
-        tasks = get(graph)
-    }
-    return tasks
-}
-
-function Find(id) {
-    return Get().Locations[id]
-}
-
-function get(graph) {
+function parseTasks(graph) {
     let tasks = {TaskStates: {}, Locations: {}};
     let vertexes = graph.Vertexes;
     for (let ID in vertexes) {//遍历测试主机信息
@@ -31,4 +13,26 @@ function get(graph) {
     return tasks
 }
 
-module.exports = {Get, Find};
+function Tasks(Graph) {
+    let tasks = {TaskStates: {}, Locations: {}};
+    let LastUpdate = new Date();
+    let inited = false;
+
+    async function Get() {
+        if ((!inited) || (LastUpdate.getTime() !== Graph.GetLastUpdate().getTime())) { //未初始化时间不符时需要更新
+            let graph = await Graph.Get();
+            LastUpdate = Graph.GetLastUpdate();
+            tasks = parseTasks(graph);
+            inited = true
+        }
+        return tasks
+    }
+
+    async function Find(id) {
+        return (await Get()).Locations[id]
+    }
+
+    return {Get, Find}
+}
+
+module.exports = Tasks;
