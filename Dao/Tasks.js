@@ -14,18 +14,8 @@ function parseTasks(graph) {
 }
 
 function Tasks(Graph) {
-    let tasks = {TaskStates: {}, Locations: {}};
-    let LastUpdate = new Date();
-    let inited = false;
-
     async function Get() {
-        if ((!inited) || (LastUpdate.getTime() !== Graph.GetLastUpdate().getTime())) { //未初始化时间不符时需要更新
-            let graph = await Graph.Get();
-            LastUpdate = Graph.GetLastUpdate();
-            tasks = parseTasks(graph);
-            inited = true
-        }
-        return tasks
+        return parseTasks(await Graph.Get())
     }
 
     async function Find(id) {
