@@ -21,14 +21,18 @@ function requestGraphJSON(URL) {
 
 async function requestGraph(sources, GraphQueryURL) {
     for (; ;) {
-        let {id, source} = sources.Get();
         try {
-            let graph = await requestGraphJSON(source + GraphQueryURL);//获取图
-            sources.Parse(graph);//更新数据源
-            return graph;//成功即退出
-        } catch (e) {//出错
-            console.log("Error when getting graph: ", e);
-            sources.Del(id);//删除数据源后继续
+            let {id, source} = sources.Get();
+            try {
+                let graph = await requestGraphJSON(source + GraphQueryURL);//获取图
+                sources.Parse(graph);//更新数据源
+                return graph;//成功即退出
+            } catch (e) {//出错
+                console.log("Error when getting graph: ", e);
+                sources.Del(id);//删除数据源后继续
+            }
+        } catch (e) {
+            process.exit(1);
         }
     }
 }
