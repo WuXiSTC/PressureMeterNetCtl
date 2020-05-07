@@ -22,7 +22,11 @@ function Tasks(Graph) {
         return (await Get()).Locations[id]
     }
 
-    return {Get, Find}
+    async function Refresh() {
+        await Graph.Refresh()
+    }
+
+    return {Get, Find, Refresh}
 }
 
 module.exports = Tasks;

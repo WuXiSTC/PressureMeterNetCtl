@@ -43,16 +43,19 @@ function Graph(sources, GraphQueryURL) {
     let LastUpdate = new Date();
     let inited = false;
 
+    async function Refresh() {
+        graph = await requestGraph(sources, GraphQueryURL);//则重新获取
+        LastUpdate = new Date();//更新获取时间
+        inited = true
+    }
+
     /**
      * 获取连接图。有暂存和数据过期则重新获取功能
      * @returns {Promise<Graph>} 返回连接图
      */
     async function Get() {
-        if ((!inited) || (new Date().getTime() - LastUpdate.getTime() >= GraphDuration)) {//如果未初始化或数据过期
-            graph = await requestGraph(sources, GraphQueryURL);//则重新获取
-            LastUpdate = new Date();//更新获取时间
-            inited = true
-        }
+        if ((!inited) || (new Date().getTime() - LastUpdate.getTime() >= GraphDuration)) //如果未初始化或数据过期
+            await Refresh();
         return graph//返回图
     }
 
@@ -60,7 +63,7 @@ function Graph(sources, GraphQueryURL) {
         return LastUpdate;
     }
 
-    return {Get, GetLastUpdate}
+    return {Get, GetLastUpdate, Refresh}
 }
 
 module.exports = Graph;

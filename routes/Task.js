@@ -21,6 +21,7 @@ async function transmit(req, res, notfound) {
 
     source = ParseSource(source.AccessAddress) + global.Config.URL.Task;
     proxy.web(req, res, {target: source});
+    await Tasks.Refresh();
 }
 
 /* GET home page. */
