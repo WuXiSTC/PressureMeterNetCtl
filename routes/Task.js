@@ -13,6 +13,7 @@ let ParseSource = require("../Dao/ParseSource");
 
 async function transmit(req, res, notfound) {
     const Tasks = global.Config.Dao.Tasks;
+    await Tasks.Refresh();
     let ID = req.params[0];
     let source = await Tasks.Find(ID);
     if (source === undefined || source["AccessAddress"] === undefined) {
@@ -21,7 +22,6 @@ async function transmit(req, res, notfound) {
 
     source = ParseSource(source.AccessAddress) + global.Config.URL.Task;
     proxy.web(req, res, {target: source});
-    await Tasks.Refresh();
 }
 
 /* GET home page. */
